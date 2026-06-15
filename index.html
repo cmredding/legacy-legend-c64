@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Legacy + Legend C64</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon-192.png">
+<style>
+:root{--orange:#f05a00;--bg:#000;--panel:#080d14;--line:#2a3b4c;--text:#fff;--muted:#b9c6d0;--cmdH:96px;--headH:38px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+body{display:flex;flex-direction:column}
+header{height:var(--headH);min-height:var(--headH);background:linear-gradient(90deg,#ff6a00,#b43000);display:flex;align-items:center;justify-content:space-between;padding:3px 8px;box-shadow:0 2px 8px #000a;z-index:50}
+h1{font-size:16px;margin:0;line-height:1}.sub{font-size:10px;opacity:.9}.top{display:flex;gap:5px}.pill{border:1px solid #fff3;border-radius:999px;background:#0007;color:#fff;padding:6px 8px;font-size:12px;font-weight:900}
+#wrap{position:relative;flex:1;background:#000;overflow:hidden;padding-bottom:calc(var(--cmdH) + env(safe-area-inset-bottom))}#game{position:absolute;inset:0 0 calc(var(--cmdH) + env(safe-area-inset-bottom)) 0;background:#000}.hint{position:absolute;left:8px;right:8px;top:48px;z-index:60;background:#09131fcc;border:1px solid #fff2;border-radius:10px;padding:8px 10px;font-size:12px;color:#fff;line-height:1.25}.hint.hide{display:none}.hint b{color:#ffd1a8}
+#help{position:absolute;inset:0;z-index:100;background:#000c;display:none;align-items:flex-end}#help.open{display:flex}.card{background:#111b26;border-top:2px solid #40576e;border-radius:16px 16px 0 0;padding:14px;width:100%;max-height:78vh;overflow:auto}.card h2{margin:0 0 8px}.card p,.card li{font-size:14px;color:#e6eef5}.orange{width:100%;border:0;border-radius:12px;background:var(--orange);color:#fff;padding:12px;font-weight:900}.warning{background:#2a1b09;border:1px solid #f05a0088;border-radius:10px;padding:10px;margin:10px 0;color:#ffe7d2;font-size:13px}
+#commandPad{position:absolute;left:0;right:0;bottom:0;z-index:90;background:#080808ee;border-top:1px solid #ffffff22;padding:5px 5px calc(5px + env(safe-area-inset-bottom));height:calc(var(--cmdH) + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(8,1fr);grid-auto-rows:1fr;gap:4px}
+.cmd{display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid #ffffff66;border-radius:9px;background:#1b1b1b;color:#fff;min-height:0;padding:2px;font-weight:800;font-size:11px;line-height:1.02;box-shadow:inset 0 -2px #0008}.cmd:active,.cmd.down{background:#f05a00;border-color:#fff;color:#fff}.cmd small{display:block;font-size:8px;opacity:.72;font-weight:700}.cmd.ret{background:#23314a}.cmd.fire{background:#45210d}
+.ejs_virtualGamepad{z-index:35!important}.ejs_virtualGamepad button,.ejs_virtualGamepad div{touch-action:none!important}.ejs_vg_button{font-weight:900!important}.ejs_vg_dpad{opacity:.82!important;transform:scale(.82)!important}.ejs_virtualGamepad [id*="button"],.ejs_vg_button{max-width:82px!important;max-height:82px!important}
+@media (max-height:760px){:root{--cmdH:84px;--headH:34px}h1{font-size:14px}.sub{display:none}.pill{padding:5px 7px;font-size:11px}.cmd{font-size:10px;border-radius:7px}.cmd small{display:none}#commandPad{gap:4px;padding-top:4px}.hint{display:none}}
+@media (orientation:landscape){:root{--cmdH:52px;--headH:32px}#commandPad{grid-template-columns:repeat(16,1fr)}.cmd{font-size:10px;border-radius:6px}.cmd small{display:none}.hint{display:none}}
+</style>
+</head>
+<body>
+<header><div><h1>Legacy + Legend</h1><div class="sub">C64 cartridge app · key command build</div></div><div class="top"><button class="pill" id="soundBtn">Sound</button><button class="pill" id="helpBtn">Help</button><button class="pill" id="fullBtn">Full</button></div></header>
+<main id="wrap">
+  <div id="game"></div>
+  <div class="hint" id="hint"><b>New:</b> command buttons now send C64 keyboard letters. If commands do not respond, open ☰ → Keyboard Support once, then tap the game screen.</div>
+  <div id="commandPad" aria-label="Legacy command keyboard">
+    <button class="cmd" data-key="a">Armor<small>A</small></button>
+    <button class="cmd" data-key="f">Fight<small>F</small></button>
+    <button class="cmd" data-key="g">Game<small>G</small></button>
+    <button class="cmd" data-key="h">Hold<small>H</small></button>
+    <button class="cmd" data-key="i">Inv<small>I</small></button>
+    <button class="cmd" data-key="p">Pass<small>P</small></button>
+    <button class="cmd" data-key="r">Rob<small>R</small></button>
+    <button class="cmd" data-key="s">Speak<small>S</small></button>
+    <button class="cmd" data-key="t">Take<small>T</small></button>
+    <button class="cmd" data-key="u">Use<small>U</small></button>
+    <button class="cmd" data-key="w">Weapon<small>W</small></button>
+    <button class="cmd" data-key="x">Xamine<small>X</small></button>
+    <button class="cmd ret" data-key="Enter">Return<small>ok</small></button>
+    <button class="cmd" data-key="Backspace">Del<small>erase</small></button>
+    <button class="cmd fire" id="focusGame">Focus<small>screen</small></button>
+  </div>
+  <div id="help"><div class="card"><h2>Command buttons</h2><ul><li>The bottom buttons send normal C64 keyboard letters: A, F, G, H, I, P, R, S, T, U, W, X.</li><li>If a button does nothing, tap <b>☰ → Keyboard Support</b> once, then tap the game screen and try again.</li><li>D-pad and Fire are still joystick controls.</li><li><b>Return</b> confirms prompts. <b>Del</b> erases during typing.</li></ul><div class="warning">Android blocks some keyboard routing until the emulator's own Keyboard Support mode is enabled. The buttons are now linked to keyboard events, not gamepad buttons.</div><button class="orange" id="closeHelp">Got it</button></div></div>
+</main>
+<script>
+// Clear old service worker/cache from earlier builds.
+if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{}); caches?.keys?.().then(keys=>keys.forEach(k=>caches.delete(k))).catch(()=>{});}
+window.EJS_player = '#game';
+window.EJS_core = 'vice_x64sc';
+window.EJS_gameName = 'Legacy + Legend';
+window.EJS_gameUrl = 'roms/Legacy-Legend-Saxxon.crt?v=restore-working1';
+window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+window.EJS_startOnLoaded = true;
+window.EJS_volume = 1;
+window.EJS_backgroundColor = '#000000';
+window.EJS_alignStartButton = 'center';
+window.EJS_defaultControls = {0:{
+  0:{value:'x',value2:'BUTTON_2'},       // Fire
+  2:{value:'v',value2:'SELECT'},
+  3:{value:'enter',value2:'START'},
+  4:{value:'up arrow',value2:'DPAD_UP'},
+  5:{value:'down arrow',value2:'DPAD_DOWN'},
+  6:{value:'left arrow',value2:'DPAD_LEFT'},
+  7:{value:'right arrow',value2:'DPAD_RIGHT'},
+  8:{value:'z',value2:'BUTTON_1'}
+},1:{},2:{},3:{}};
+window.EJS_VirtualGamepadSettings = [
+  {type:'dpad', location:'left', left:'24%', top:'40%', joystickInput:false, inputValues:[4,5,6,7]},
+  {type:'button', text:'Fire', id:'c64_fire', location:'right', left:'14%', top:'42%', bold:true, fontSize:22, input_value:0}
+];
+</script>
+<script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
+<script>
+const hint=document.getElementById('hint');
+const game=document.getElementById('game');
+function unlockAudio(){hint.classList.add('hide');try{window.AudioContext&&new AudioContext().resume()}catch(e){};try{window.webkitAudioContext&&new webkitAudioContext().resume()}catch(e){};document.querySelectorAll('audio,video').forEach(a=>{try{a.muted=false;a.volume=1;a.play?.()}catch(e){}})}
+function focusGame(){
+  unlockAudio();
+  try{game.focus()}catch(e){}
+  const c=document.querySelector('#game canvas, canvas');
+  if(c){try{c.setAttribute('tabindex','0');c.focus()}catch(e){}}
+  try{document.body.focus()}catch(e){}
+}
+const keyInfo={
+  'a':[65,'KeyA','a'],'f':[70,'KeyF','f'],'g':[71,'KeyG','g'],'h':[72,'KeyH','h'],'i':[73,'KeyI','i'],'p':[80,'KeyP','p'],
+  'r':[82,'KeyR','r'],'s':[83,'KeyS','s'],'t':[84,'KeyT','t'],'u':[85,'KeyU','u'],'w':[87,'KeyW','w'],'x':[88,'KeyX','x'],
+  'Enter':[13,'Enter','Enter'],'Backspace':[8,'Backspace','Backspace']
+};
+function targets(){
+  const list=[window,document,document.body,game,document.activeElement].filter(Boolean);
+  document.querySelectorAll('canvas,#game,.ejs_canvas,.ejs_player').forEach(el=>list.push(el));
+  document.querySelectorAll('iframe').forEach(fr=>{try{list.push(fr.contentWindow,fr.contentDocument,fr.contentDocument?.body)}catch(e){}});
+  return [...new Set(list.filter(Boolean))];
+}
+function fireKey(key,down=true){
+  const [codeNum,code,keyVal]=keyInfo[key]||[0,'',key];
+  const opts={key:keyVal,code:code,keyCode:codeNum,which:codeNum,bubbles:true,cancelable:true,composed:true};
+  const type=down?'keydown':'keyup';
+  for(const t of targets()){
+    try{t.dispatchEvent(new KeyboardEvent(type,opts));}catch(e){}
+  }
+  if(down && key.length===1){
+    for(const t of targets()){try{t.dispatchEvent(new KeyboardEvent('keypress',opts));}catch(e){}}
+  }
+}
+function pressKey(key,btn){
+  focusGame();
+  btn?.classList.add('down');
+  fireKey(key,true);
+  setTimeout(()=>{fireKey(key,false);btn?.classList.remove('down')},90);
+}
+document.querySelectorAll('#commandPad .cmd[data-key]').forEach(btn=>{
+  btn.addEventListener('pointerdown',e=>{e.preventDefault();pressKey(btn.dataset.key,btn);});
+});
+document.getElementById('focusGame').onclick=focusGame;
+document.getElementById('soundBtn').onclick=()=>{unlockAudio();alert('Sound unlocked. If still silent, tap the game screen and press Fire once.')};
+document.getElementById('helpBtn').onclick=()=>document.getElementById('help').classList.add('open');
+document.getElementById('closeHelp').onclick=()=>document.getElementById('help').classList.remove('open');
+document.getElementById('fullBtn').onclick=()=>document.documentElement.requestFullscreen?.();
+document.body.addEventListener('pointerdown',unlockAudio,{once:true});
+setTimeout(()=>hint.classList.add('hide'),9000);
+</script>
+</body>
+</html>
