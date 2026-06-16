@@ -1,7 +1,8 @@
 {
   "name": "Legacy + Legend C64 Command Pad",
   "short_name": "Legacy C64",
-  "start_url": "/index.html?v=official-dpad3",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#f05a00",

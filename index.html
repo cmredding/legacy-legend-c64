@@ -26,7 +26,7 @@ h1{font-size:16px;margin:0;line-height:1}.sub{font-size:10px;opacity:.9}.top{dis
 <header><div><h1>Legacy + Legend</h1><div class="sub">C64 cartridge app · key command build</div></div><div class="top"><button class="pill" id="soundBtn">Sound</button><button class="pill" id="helpBtn">Help</button><button class="pill" id="fullBtn">Full</button></div></header>
 <main id="wrap">
   <div id="game"></div>
-  <div class="hint" id="hint"><b>New:</b> command buttons now send C64 keyboard letters. If commands do not respond, open ☰ → Keyboard Support once, then tap the game screen.</div>
+  <div class="hint" id="hint"><b>Tip:</b> command buttons send C64 keyboard letters. Keyboard support now turns on automatically. If a command doesn't respond, tap the game screen once, then try again.</div>
   <div id="commandPad" aria-label="Legacy command keyboard">
     <button class="cmd" data-key="a">Armor<small>A</small></button>
     <button class="cmd" data-key="f">Fight<small>F</small></button>
@@ -44,7 +44,7 @@ h1{font-size:16px;margin:0;line-height:1}.sub{font-size:10px;opacity:.9}.top{dis
     <button class="cmd" data-key="Backspace">Del<small>erase</small></button>
     <button class="cmd fire" id="focusGame">Focus<small>screen</small></button>
   </div>
-  <div id="help"><div class="card"><h2>Command buttons</h2><ul><li>The bottom buttons send normal C64 keyboard letters: A, F, G, H, I, P, R, S, T, U, W, X.</li><li>If a button does nothing, tap <b>☰ → Keyboard Support</b> once, then tap the game screen and try again.</li><li>D-pad and Fire are still joystick controls.</li><li><b>Return</b> confirms prompts. <b>Del</b> erases during typing.</li></ul><div class="warning">Android blocks some keyboard routing until the emulator's own Keyboard Support mode is enabled. The buttons are now linked to keyboard events, not gamepad buttons.</div><button class="orange" id="closeHelp">Got it</button></div></div>
+  <div id="help"><div class="card"><h2>Command buttons</h2><ul><li>The bottom buttons send normal C64 keyboard letters: A, F, G, H, I, P, R, S, T, U, W, X.</li><li>Keyboard Support is enabled automatically. If a button does nothing, tap the game screen once and try again.</li><li>D-pad and Fire are still joystick controls.</li><li><b>Return</b> confirms prompts. <b>Del</b> erases during typing.</li></ul><div class="warning">If letters still don't register after tapping the screen, open ☰ (the emulator menu) and confirm Keyboard Support is on.</div><button class="orange" id="closeHelp">Got it</button></div></div>
 </main>
 <script>
 // Clear old service worker/cache from earlier builds.
@@ -72,6 +72,10 @@ window.EJS_VirtualGamepadSettings = [
   {type:'dpad', location:'left', left:'24%', top:'40%', joystickInput:false, inputValues:[4,5,6,7]},
   {type:'button', text:'Fire', id:'c64_fire', location:'right', left:'14%', top:'42%', bold:true, fontSize:22, input_value:0}
 ];
+// Turn on the emulator's own keyboard routing as soon as the game is ready.
+// Without this, the C64 core ignores letter keys (this is the "Keyboard Support" toggle).
+window.EJS_ready = function(){ try{ window.__enableCoreKeyboard && window.__enableCoreKeyboard(); }catch(e){} };
+window.EJS_onGameStart = function(){ try{ window.__enableCoreKeyboard && window.__enableCoreKeyboard(); }catch(e){} };
 </script>
 <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
 <script>
@@ -85,6 +89,19 @@ function focusGame(){
   if(c){try{c.setAttribute('tabindex','0');c.focus()}catch(e){}}
   try{document.body.focus()}catch(e){}
 }
+// Enable EmulatorJS keyboard routing so the C64 core actually receives letter keys.
+let __kbOn=false;
+window.__enableCoreKeyboard=function(){
+  try{
+    const fn=window.EJS_emulator&&window.EJS_emulator.gameManager&&window.EJS_emulator.gameManager.functions&&window.EJS_emulator.gameManager.functions.setKeyboardEnabled;
+    if(fn){fn(true);__kbOn=true;}
+  }catch(e){}
+};
+// Keep trying until the emulator exists and is started (covers cold loads).
+const __kbTimer=setInterval(()=>{
+  if(window.EJS_emulator&&window.EJS_emulator.started){window.__enableCoreKeyboard();if(__kbOn)clearInterval(__kbTimer);}
+},700);
+setTimeout(()=>clearInterval(__kbTimer),30000);
 const keyInfo={
   'a':[65,'KeyA','a'],'f':[70,'KeyF','f'],'g':[71,'KeyG','g'],'h':[72,'KeyH','h'],'i':[73,'KeyI','i'],'p':[80,'KeyP','p'],
   'r':[82,'KeyR','r'],'s':[83,'KeyS','s'],'t':[84,'KeyT','t'],'u':[85,'KeyU','u'],'w':[87,'KeyW','w'],'x':[88,'KeyX','x'],
@@ -109,9 +126,10 @@ function fireKey(key,down=true){
 }
 function pressKey(key,btn){
   focusGame();
+  window.__enableCoreKeyboard&&window.__enableCoreKeyboard();
   btn?.classList.add('down');
   fireKey(key,true);
-  setTimeout(()=>{fireKey(key,false);btn?.classList.remove('down')},90);
+  setTimeout(()=>{fireKey(key,false);btn?.classList.remove('down')},130);
 }
 document.querySelectorAll('#commandPad .cmd[data-key]').forEach(btn=>{
   btn.addEventListener('pointerdown',e=>{e.preventDefault();pressKey(btn.dataset.key,btn);});
