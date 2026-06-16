@@ -17,7 +17,7 @@ h1{font-size:16px;margin:0;line-height:1}.sub{font-size:10px;opacity:.9}.top{dis
 #help{position:absolute;inset:0;z-index:100;background:#000c;display:none;align-items:flex-end}#help.open{display:flex}.card{background:#111b26;border-top:2px solid #40576e;border-radius:16px 16px 0 0;padding:14px;width:100%;max-height:78vh;overflow:auto}.card h2{margin:0 0 8px}.card p,.card li{font-size:14px;color:#e6eef5}.orange{width:100%;border:0;border-radius:12px;background:var(--orange);color:#fff;padding:12px;font-weight:900}.warning{background:#2a1b09;border:1px solid #f05a0088;border-radius:10px;padding:10px;margin:10px 0;color:#ffe7d2;font-size:13px}
 #commandPad{position:absolute;left:0;right:0;bottom:0;z-index:90;background:#080808ee;border-top:1px solid #ffffff22;padding:5px 5px calc(5px + env(safe-area-inset-bottom));height:calc(var(--cmdH) + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(8,1fr);grid-auto-rows:1fr;gap:4px}
 .cmd{display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid #ffffff66;border-radius:9px;background:#1b1b1b;color:#fff;min-height:0;padding:2px;font-weight:800;font-size:11px;line-height:1.02;box-shadow:inset 0 -2px #0008}.cmd:active,.cmd.down{background:#f05a00;border-color:#fff;color:#fff}.cmd small{display:block;font-size:8px;opacity:.72;font-weight:700}.cmd.ret{background:#23314a}.cmd.fire{background:#45210d}
-.ejs_virtualGamepad{z-index:35!important}.ejs_virtualGamepad button,.ejs_virtualGamepad div{touch-action:none!important}.ejs_vg_button{font-weight:900!important}.ejs_vg_dpad{opacity:.82!important;transform:scale(.82)!important}.ejs_virtualGamepad [id*="button"],.ejs_vg_button{max-width:82px!important;max-height:82px!important}
+.ejs_virtualGamepad{z-index:35!important}.ejs_virtualGamepad button,.ejs_virtualGamepad div{touch-action:none!important}.ejs_vg_button{font-weight:900!important}.ejs_vg_dpad{opacity:.85!important;transform:scale(1.05)!important}.ejs_virtualGamepad [id*="button"],.ejs_vg_button{max-width:112px!important;max-height:112px!important}
 @media (max-height:760px){:root{--cmdH:84px;--headH:34px}h1{font-size:14px}.sub{display:none}.pill{padding:5px 7px;font-size:11px}.cmd{font-size:10px;border-radius:7px}.cmd small{display:none}#commandPad{gap:4px;padding-top:4px}.hint{display:none}}
 @media (orientation:landscape){:root{--cmdH:52px;--headH:32px}#commandPad{grid-template-columns:repeat(16,1fr)}.cmd{font-size:10px;border-radius:6px}.cmd small{display:none}.hint{display:none}}
 </style>
@@ -69,8 +69,8 @@ window.EJS_defaultControls = {0:{
   8:{value:'z',value2:'BUTTON_1'}
 },1:{},2:{},3:{}};
 window.EJS_VirtualGamepadSettings = [
-  {type:'dpad', location:'left', left:'24%', top:'40%', joystickInput:false, inputValues:[4,5,6,7]},
-  {type:'button', text:'Fire', id:'c64_fire', location:'right', left:'14%', top:'42%', bold:true, fontSize:22, input_value:0}
+  {type:'dpad', location:'left', left:'25%', top:'30%', joystickInput:false, inputValues:[4,5,6,7]},
+  {type:'button', text:'Fire', id:'c64_fire', location:'right', left:'15%', top:'32%', bold:true, fontSize:28, input_value:0}
 ];
 // Turn on the emulator's own keyboard routing as soon as the game is ready.
 // Without this, the C64 core ignores letter keys (this is the "Keyboard Support" toggle).
